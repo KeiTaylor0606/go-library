@@ -7,7 +7,10 @@ import (
 	"strings"
 )
 
-//外部コマンドを実行する関数
+/*
+AssignLinuxCmdHandler => ルート証明書を外部コマンドでインストールさせる関数
+*/
+
 func AssignLinuxCmdHandler(password string) error {
 	//ルート権限で実行する。
 	cmd := exec.Command("sudo", "-S", "command")
