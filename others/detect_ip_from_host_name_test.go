@@ -1,32 +1,41 @@
 package others
 
 import (
-	"fmt"
 	"testing"
 )
 
-var hostnameFromIPTests = map[string]string{
-	"127.0.0.1": "localhost",
-	"8.8.4.4":   "dns.google.",
-}
-
 func TestGetHostnameFromIPAddress(t *testing.T) {
-	for ip, hn := range hostnameFromIPTests { // ipアドレスとホスト名の配列を探索
-		op, err := GetHostnameFromIPAddress(ip) // ipアドレスからホスト名を得る
-		if err != nil {
-			t.Error(err)
-		}
-		judge := false // 判定
-		var key string // 実行結果から得られたホスト名
-		for _, key = range op {
-			if key == hn {
-				fmt.Println("Passed :) => IP:", ip, "/Key:", key, "/Wanted:", hn)
-				judge = true
+	testcases := []struct {
+		name string
+		ip   string
+		want string
+	}{
+		{
+			name: "test_00",
+			ip:   "127.0.0.1",
+			want: "localhost",
+		},
+		{
+			name: "test_01",
+			ip:   "8.8.4.4",
+			want: "dns.google.",
+		},
+	}
+	for _, testcase := range testcases {
+		t.Run(testcase.name, func(t *testing.T) {
+			op, err := GetHostnameFromIPAddress(testcase.ip)
+			if err != nil {
+				t.Errorf("err: %v\n", err)
 			}
-		}
-		if !judge {
-			fmt.Println("Failed :( => IP:", ip, "/Key:", key, "/Wanted:", hn)
-			t.Errorf("Error") // テストNGがあればエラーにする（TODO: エラー内容がわかるようにメッセージをちゃんと書く）
-		}
+			judge := false
+			for _, res := range op {
+				if res == testcase.want {
+					judge = true
+				}
+			}
+			if !judge {
+				t.Errorf("want:%v\n", testcase.want)
+			}
+		})
 	}
 }
